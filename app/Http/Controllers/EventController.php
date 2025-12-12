@@ -11,9 +11,22 @@ use Illuminate\Support\Facades\Storage;
 class EventController extends Controller
 {
     // 1. Menampilkan Daftar Event (Hanya milik EO yang sedang login)
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::where('user_id', Auth::id())->get(); // Ambil event punya sendiri
+        $events = Event::where('user_id', Auth::id())->get();
+
+        $search = $request->input('search');
+        $events = Event::where('user_id', Auth::id())
+            ->when($search, function ($query, $search) {
+                // Jika ada pencarian, cari berdasarkan Judul ATAU Lokasi
+                return $query->where(function($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                      ->orWhere('location', 'like', "%{$search}%");
+                });
+            })
+            ->latest() // Urutkan dari yang terbaru
+            ->paginate(5); // Tampilkan 5 data per halaman (Pagination)
+
         return view('eo.events.index', compact('events'));
     }
 

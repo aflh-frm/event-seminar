@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ParticipantController;
@@ -38,11 +39,18 @@ Route::get('/dashboard', function () {
 // GRUP 1: Khusus SUPER ADMIN
 // ====================================================
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard'); 
-    })->name('dashboard');
     
-    // Nanti taruh route manajemen user/kategori disini
+    // Dashboard
+    Route::get('/dashboard', [\App\Http\Controllers\AdminController::class, 'index'])->name('dashboard');
+    
+    // Approval Event
+    Route::get('/events', [\App\Http\Controllers\AdminController::class, 'events'])->name('events.index');
+    Route::post('/events/{id}/approve', [\App\Http\Controllers\AdminController::class, 'approveEvent'])->name('events.approve');
+    Route::post('/events/{id}/close', [\App\Http\Controllers\AdminController::class, 'closeEvent'])->name('events.close');
+
+    // Kategori
+    Route::resource('categories', CategoryController::class);
+
 });
 
 

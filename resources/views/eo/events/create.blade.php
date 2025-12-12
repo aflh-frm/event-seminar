@@ -19,6 +19,7 @@
                     <label class="block text-gray-700 font-medium mb-2">Kategori</label>
                     <select name="category_id" class="w-full border-gray-300 border p-2 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200">
                         <option value="" disabled selected>-- Pilih Kategori --</option>
+                        
                         @foreach($categories as $cat)
                             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
                         @endforeach
@@ -54,14 +55,9 @@
 
                 <div class="mb-6">
                     <label class="block text-gray-700 font-medium mb-2">Poster Event</label>
-                    <div class="flex items-center justify-center w-full">
-                        <label class="flex flex-col w-full h-32 border-2 border-dashed border-blue-200 hover:bg-blue-50 hover:border-blue-300 rounded-lg cursor-pointer transition duration-200">
-                            <div class="flex flex-col items-center justify-center pt-7">
-                                <svg class="w-8 h-8 text-blue-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                                <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-blue-600">Klik untuk upload gambar</p>
-                            </div>
-                            <input type="file" name="banner" class="opacity-0" />
-                        </label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:bg-gray-50 transition bg-gray-50/50">
+                        <input type="file" name="banner" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 cursor-pointer">
+                        <p class="text-xs text-gray-400 mt-2">Format: JPG, PNG (Max 2MB)</p>
                     </div>
                 </div>
 
