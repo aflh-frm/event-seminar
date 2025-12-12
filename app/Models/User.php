@@ -45,4 +45,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
+    }
+
+    // Relasi: User (Peserta) punya banyak Transaksi/Booking
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

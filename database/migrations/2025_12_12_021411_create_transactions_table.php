@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained(); // Peserta
+            $table->foreignId('event_id')->constrained(); // Event yang didaftar
+            $table->string('payment_proof')->nullable(); // Bukti transfer
+            
+            // Status bayar: 'pending', 'confirmed', 'rejected'
+            $table->enum('status', ['pending', 'confirmed', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }
