@@ -17,7 +17,13 @@ use App\Models\Transaction;
 
 // 1. Halaman Depan (Landing Page)
 Route::get('/', function () {
-    return view('welcome');
+    $events = Event::with('category')
+                   ->where('status', 'published')
+                   ->latest()
+                   ->take(6)
+                   ->get();
+
+    return view('welcome', compact('events'));
 });
 
 // 2. Logic Pengalihan Dashboard (Redirect setelah Login)
