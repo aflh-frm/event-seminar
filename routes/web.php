@@ -101,6 +101,11 @@ Route::middleware(['auth', 'role:eo'])->prefix('eo')->name('eo.')->group(functio
     Route::get('/participants', [ParticipantController::class, 'index'])->name('participants.index');
     Route::post('/participants/{id}/approve', [ParticipantController::class, 'approve'])->name('participants.approve');
     Route::post('/participants/{id}/reject', [ParticipantController::class, 'reject'])->name('participants.reject');
+
+    // Profil & Password
+    Route::get('/profile', [\App\Http\Controllers\EOProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [\App\Http\Controllers\EOProfileController::class, 'update'])->name('profile.update');
+    Route::put('/password', [\App\Http\Controllers\EOProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
 
