@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
 use App\Models\Transaction;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,11 @@ use App\Models\Transaction;
 
 // 1. Halaman Depan (Landing Page)
 Route::get('/', function () {
+
+    Event::where('status', 'published')
+         ->whereDate('event_date', '<', Carbon::now())
+         ->update(['status' => 'closed']);
+
     $events = Event::with('category')
                    ->where('status', 'published')
                    ->latest()
@@ -106,6 +113,15 @@ Route::middleware(['auth', 'role:eo'])->prefix('eo')->name('eo.')->group(functio
     Route::get('/profile', [\App\Http\Controllers\EOProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\EOProfileController::class, 'update'])->name('profile.update');
     Route::put('/password', [\App\Http\Controllers\EOProfileController::class, 'updatePassword'])->name('profile.password');
+
+    // Kelola Rekening
+    Route::resource('banks', \App\Http\Controllers\EOBankController::class)
+        ->names([
+            'index' => 'banks.index',
+            'store' => 'banks.store',
+            'destroy' => 'banks.destroy',
+        ])
+        ->only(['index', 'store', 'destroy']);
 });
 
 
