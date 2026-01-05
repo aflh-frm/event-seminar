@@ -129,10 +129,31 @@ Route::middleware(['auth', 'role:eo'])->prefix('eo')->name('eo.')->group(functio
 // GRUP 3: Khusus PESERTA (User)
 // ====================================================
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
+    // Dashboard Peserta
     Route::get('/dashboard', function () {
-        return view('user.dashboard'); 
+        // Ambil 3 event terbaru untuk ditampilkan di dashboard (biar tidak sepi)
+        $events = Event::with('category')
+            ->where('status', 'published')
+            ->latest()
+            ->take(3)
+            ->get();
+
+        return view('user.dashboard', compact('events'));
     })->name('dashboard');
-    
+    // History Transaksi
+    Route::get('/my-tickets', [\App\Http\Controllers\UserTransactionController::class, 'index'])
+        ->name('transactions.index');
+
+    // Proses Booking (Link ini akan dipanggil dari tombol "Daftar")
+    Route::post('/event/{id}/book', [\App\Http\Controllers\UserTransactionController::class, 'store'])
+        ->name('event.book');
+    Route::get('/transactions/{id}/payment', [\App\Http\Controllers\UserTransactionController::class, 'showPayment'])
+        ->name('transactions.payment');
+
+    Route::put('/transactions/{id}/payment', [\App\Http\Controllers\UserTransactionController::class, 'uploadProof'])
+        ->name('transactions.upload');
+    Route::get('/transactions/{id}/download', [\App\Http\Controllers\UserTransactionController::class, 'downloadTicket'])
+        ->name('transactions.download');
     // Nanti taruh route booking tiket disini
 });
 

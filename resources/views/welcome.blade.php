@@ -76,45 +76,74 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 @forelse($events as $event)
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 group">
-                    <div class="relative h-48 overflow-hidden bg-gray-200">
-                        @if($event->banner)
-                            <img src="{{ asset('storage/'.$event->banner) }}" alt="{{ $event->title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                        @else
-                            <div class="flex items-center justify-center h-full text-gray-400">
-                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 group">
+                        <div class="relative h-48 overflow-hidden bg-gray-200">
+                            @if($event->banner)
+                                <img src="{{ asset('storage/' . $event->banner) }}" alt="{{ $event->title }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                            @else
+                                <div class="flex items-center justify-center h-full text-gray-400">
+                                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                </div>
+                            @endif
+
+                            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-blue-600 shadow-sm">
+                                {{ $event->category->name ?? 'Umum' }}
                             </div>
-                        @endif
-                        
-                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-blue-600 shadow-sm">
-                            {{ $event->category->name ?? 'Umum' }}
                         </div>
-                    </div>
 
-                    <div class="p-6">
-                        <div class="text-xs text-gray-500 mb-2 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            {{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }}
-                        </div>
-                        
-                        <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition">
-                            {{ $event->title }}
-                        </h3>
-                        
-                        <p class="text-gray-500 text-sm line-clamp-2 mb-4">
-                            {{ $event->description }}
-                        </p>
+                        <div class="p-6">
+                            <div class="text-xs text-gray-500 mb-2 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                {{ \Carbon\Carbon::parse($event->event_date)->format('d M Y') }}
+                            </div>
 
-                        <div class="flex items-center justify-between pt-4 border-t border-gray-50">
-                            <div>
-                                <span class="text-xs text-gray-400 uppercase font-bold">Harga Tiket</span>
-                                <div class="text-lg font-bold text-blue-600">
-                                    {{ $event->price == 0 ? 'GRATIS' : 'Rp ' . number_format($event->price, 0, ',', '.') }}
+                            <h3 class="text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-blue-600 transition">
+                                {{ $event->title }}
+                            </h3>
+
+                            <p class="text-gray-500 text-sm line-clamp-2 mb-4">
+                                {{ $event->description }}
+                            </p>
+
+                            <div class="flex items-center justify-between pt-4 border-t border-gray-50">
+
+                                <div>
+                                    <span class="text-xs text-gray-400 uppercase font-bold">Harga Tiket</span>
+                                    <div class="text-lg font-bold text-blue-600">
+                                        {{ $event->price == 0 ? 'GRATIS' : 'Rp ' . number_format($event->price, 0, ',', '.') }}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    @auth
+                                        {{-- Jika User Login sebagai 'user', tampilkan tombol Daftar --}}
+                                        @if(Auth::user()->role == 'user')
+                                            <form action="{{ route('user.event.book', $event->id) }}" method="POST"
+                                                onsubmit="return confirm('Apakah Anda yakin ingin mendaftar ke event ini?');">
+                                                @csrf
+                                                <button type="submit"
+                                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-md hover:shadow-lg">
+                                                    Daftar
+                                                </button>
+                                            </form>
+                                            {{-- Jika User Login sebagai Admin/EO, tampilkan info saja (Opsional) --}}
+                                        @elseif(Auth::user()->role != 'user')
+                                            <span class="text-xs text-gray-400 italic">Login sebagai {{ Auth::user()->role }}</span>
+                                        @endif
+                                    @else
+                                        {{-- Jika Belum Login, arahkan ke halaman Login --}}
+                                        <a href="{{ route('login') }}"
+                                            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold transition">
+                                            Daftar
+                                        </a>
+                                    @endauth
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 @empty
                 @endforelse
             </div>
